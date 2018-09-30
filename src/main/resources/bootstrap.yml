@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: cloudplatform-monitor
+  cloud:
+      config:
+        fail-fast: true
+        name: ${spring.application.name}
+        profile: ${spring.profiles.active}
+        label: master
+        discovery:
+          enabled: true
+          serviceId: cloudplatform-config
+  profiles:
+    active: dev
+  boot:
+    admin:
+      turbine:
+        location: cloudplatform-monitor
+      routes:
+        endpoints: env,metrics,trace,dump,jolokia,info,configprops,trace,logfile,refresh,flyway,liquibase,heapdump,loggers,auditevents,hystrix.stream,turbine.stream
+
+turbine:
+    app-config: cloudplatform-gateway-local #收集监控信息的服务名
+    combine-host-port: true
+    cluster-name-expression: new String('default') #集群名称
+server:
+  port: 9096
+
+eureka:
+  instance:
+    prefer-ip-address: true #使用IP注册
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+    ##续约更新时间间隔设置5秒，m默认30s
+    lease-renewal-interval-in-seconds: 5
+    ##续约到期时间10秒，默认是90秒
+    lease-expiration-duration-in-seconds: 10
+  client:
+      service-url:
+        defaultZone: http://119.27.191.252:9090/eureka/
+
+management:
+  security:
+    enabled: false
+
